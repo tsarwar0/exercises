@@ -1,6 +1,14 @@
 # Docker Container with Sample Java App
 
-This project contains a Dockerfile for building, scanning, and running a Java application. The application is built using Maven, and the Docker image is created in multiple stages to demonstrate some aspects of security and efficiency.
+This project contains a Dockerfile for building, scanning, and running a Java application. The application is built using Maven, and the Docker image is created in multiple stages to demonstrate some aspects of security and efficiency. Some of the practices that you will see implemented in this docker file is:
+
+- Use of Authentic Base Image
+- Multi Stage Build
+- Image Scanning
+- Lease Privilige for App User.
+- Resource Management for containers.
+
+Steps are also included if you want to deploy it to ACR and use Microsoft Defender as your defacto container scanning in azure container registry. This is optional as adding  scanning does add time and might delay builds and process so must consider this .
 
 ## Dockerfile Explanation
 
@@ -19,7 +27,7 @@ This project contains a Dockerfile for building, scanning, and running a Java ap
     RUN mvn package -DskipTests
     ```
 
-### Stage 2: Security Scanning with Trivy - This can be part of CI/CD pipeline as well if you dont chose to ember here.
+### Stage 2: Security Scanning with Trivy - This can be part of CI/CD pipeline as well if you dont chose to embed here.
 
 1. **Base Image**: Uses the builder stage as the base
 2. **Copy Trivy**: `COPY --from=aquasec/trivy:latest /usr/local/bin/trivy /usr/local/bin/trivy`
@@ -54,27 +62,27 @@ This project contains a Dockerfile for building, scanning, and running a Java ap
 
 2. **Create Resource Group**:
     ```sh
-    az group create --name WebAppResourceGroup --location eastus
+    az group create --name rg-devsecops--location eastus
     ```
 
 3. **Create Azure Container Registry**:
     ```sh
-    az acr create --resource-group WebAppResourceGroup --name webappacr --sku Basic
+    az acr create --name imgregistry01 --resource-group rg-devsecops --sku Standard
     ```
 
-4. **Login to ACR**:
+4. **Login to ACR**: You can only do this way if you have local docker container running. Please see Mircrosoft Docs if you dont have local docker running.
     ```sh
-    az acr login --name webappacr
+    az acr login --name imgregistry01
     ```
 
 5. **Build Docker Image**:
     ```sh
-    docker build -t webappacr.azurecr.io/webapp:latest .
+    docker build -t imgregistry01.azurecr.io/webapp:latest .
     ```
 
 6. **Push Docker Image**:
     ```sh
-    docker push webappacr.azurecr.io/webapp:latest
+    docker push imgregistry01.azurecr.io/webapp:latest
     ```
 
 ## Enable Microsoft Defender for Containers
