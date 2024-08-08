@@ -1,6 +1,6 @@
 # DevSecOps Security 
 
-## OverviewThis repository demonstrates some common concepts and sample code that gives you  idea and understanding of securing pods , containers and your pipelines . Will also provide some common best practices used in the world of K8s , docker , pod security and CI/CD pipelines.
+## Overview This repository demonstrates some common concepts and sample code that gives you  idea and understanding of securing pods , containers and your pipelines . Will also provide some common best practices used in the world of K8s , docker , pod security and CI/CD pipelines.
 
 ## Docker Security Best Practice
 - **Authentic Base Images:** Reduces the risk of vulnerabilities by always using official images from trusted sources. Official images are regularly updated ,maintained and verified.
@@ -17,7 +17,23 @@
 
 Refer to docker file doc to see some of the above mentioned pratices implemented , See: [DOCKER-README](docker_readme.md)
 
-## Local Development Setup
+## Kubernetes security features
+Security has become a critical feature from end to end application development along with Infrastructure as they compliment each other to bring the best of the security posture . Below are the most common security features of K8s that should not be ignored.  All of them combine together to minimize the attack surface.
+- **Cluster Hardening:**
+  - Role-Based Access Control (RBAC): RBAC is an  standard for enterprises that requires minimizing the control as much as possible within the cluster whether it's on-prem or in the cloud. Thus, user and service 
+    permissions are assigned and are tightly scoped.
+  - API Server Security: Providing restricted access through the following ways: direct access limitation, TLS encryption for all API traffic whether OnPrem or cloud.
+
+- **Pod Security:**
+  - Run Containers as Non-Root: Not engendering containers with root privileges is a notable method to provide a second defense line on the time that a compromise is possible. Make use of non-root containers and/or       
+    rootless container engines to the higher security management.
+  - Immutable File System: Utilizing a read-only root filesystem for containers is the best way to apply an immutable infrastructure strategy. It is also the way of stopping any unapproved changes in memory to happen 
+    during container processing period.
+    
+- **Network Security:**
+  - Network Policies: For instance, the setting of network policies is for controlling the still open communication between pods and the limitation of the accesses to the resources which are being altered or effectively      owned. It is a method of preventing lateral movement of the clustered applications from other containers in the event of a breach.
+  - Audit Logging:  Audit logging is a security measure that records all actions done by the API in order to able to analyze such logs at a later time point. The practice to discover and respond to malicious traffic 
+    among the inner parts of a cluster is one of the ways in which clear records of the activities are of much use.
 
 ### Prerequisites
 Ensure you have the following setup:
