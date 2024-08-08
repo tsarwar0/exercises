@@ -21,19 +21,27 @@ Refer to docker file doc to see some of the above mentioned pratices implemented
 Security has become a critical feature from end to end application development along with Infrastructure as they compliment each other to bring the best of the security posture . Below are the most common security features of K8s that should not be ignored.  All of them combine together to minimize the attack surface.
 - **Cluster Hardening:**
   - Role-Based Access Control (RBAC): RBAC is an  standard for enterprises that requires minimizing the control as much as possible within the cluster whether it's on-prem or in the cloud. Thus, user and service 
-    permissions are assigned and are tightly scoped.
-  - API Server Security: Providing restricted access through the following ways: direct access limitation, TLS encryption for all API traffic whether OnPrem or cloud.
+    permissions are assigned and are tightly scoped. For Example Use Role and Role Bindings for assigning access to resources.
+    
+  - API Server Security: Providing restricted access through the following ways: direct access limitation, TLS encryption for all API traffic whether OnPrem or cloud. Usually managed K8s implementations already takes of it unless you have setup your own cluster.
 
 - **Pod Security:**
   - Run Containers as Non-Root: Not engendering containers with root privileges is a notable method to provide a second defense line on the time that a compromise is possible. Make use of non-root containers and/or       
-    rootless container engines to the higher security management.
+    rootless container engines to the higher security management. For Example use of flags like allowPrivilegeEscalation along with RunAsUser under security context allows you to get started with this implementation.
+    
   - Immutable File System: Utilizing a read-only root filesystem for containers is the best way to apply an immutable infrastructure strategy. It is also the way of stopping any unapproved changes in memory to happen 
-    during container processing period.
+    during container processing period. Use of readOnlyRootFilesystem under Security Context ,helps you get started with this feature.
     
 - **Network Security:**
-  - Network Policies: For instance, the setting of network policies is for controlling the still open communication between pods and the limitation of the accesses to the resources which are being altered or effectively      owned. It is a method of preventing lateral movement of the clustered applications from other containers in the event of a breach.
+  - Network Policies: For instance, the setting of network policies is for controlling the still open communication between pods and the limitation of the accesses to the resources which are being altered or effectively      owned. It is a method of preventing lateral movement of the clustered applications from other containers in the event of a breach. For Example , Setting Network Policy to allow ingress from pods with only specific 
+    labels on specific pors sets a start where it can be furthur implemented as needed.
+    
   - Audit Logging:  Audit logging is a security measure that records all actions done by the API in order to able to analyze such logs at a later time point. The practice to discover and respond to malicious traffic 
-    among the inner parts of a cluster is one of the ways in which clear records of the activities are of much use.
+    among the inner parts of a cluster is one of the ways in which clear records of the activities are of much use. For Example creat an Audit File Policy or use Prometheus , Dynatrace on prem or in cloud for more in 
+    depth vsisibility to metrices etc.
+
+  Refer to securpod.yaml read me file to see some of the above mentioned pratices implemented , See: See: [SECUREPOD-README](podsec_readme.md)
+
 
 ### Prerequisites
 Ensure you have the following setup:
