@@ -1,6 +1,6 @@
 # DevSecOps Security 
 
-## Overview This repository demonstrates some common concepts and sample code that gives you  idea and understanding of securing pods , containers and your pipelines . Will also provide some common best practices used in the world of K8s , docker , pod security and CI/CD pipelines.
+## This repository demonstrates some common concepts and sample code that gives you  idea and understanding of securing pods , containers and your pipelines . Will also provide some common best practices used in the world of K8s , docker , pod security and CI/CD pipelines.
 
 ## Docker Security Best Practice
 - **Authentic Base Images:** Reduces the risk of vulnerabilities by always using official images from trusted sources. Official images are regularly updated ,maintained and verified.
