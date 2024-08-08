@@ -16,7 +16,7 @@ This repository demonstrates some proof of concepts and tasks that gives you bas
 
 - **Resource Limitation:** Providing Specific resource limitation allows applications to effectively manage memory and cpu resources and adhere to docker best practices in a containerized enviroment.
 
-Refer to docker file doc to see some of the above mentioned pratices implemented , See: [DOCKER-README](./documentation/docker_readme.md)
+Refer to docker file doc to see some of the above mentioned pratices implemented , See: [DOCKER-README](docker_readme.md)
 
 ## Local Development Setup
 
