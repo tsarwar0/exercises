@@ -1,8 +1,6 @@
-# Docker Container with Sample Jacva App
+# Docker Container with Sample Java App
 
 This project contains a Dockerfile for building, scanning, and running a Java application. The application is built using Maven, and the Docker image is created in multiple stages to demonstrate some aspects of security and efficiency.
-
-## Docker File Explaied
 
 ## Dockerfile Explanation
 
@@ -15,30 +13,17 @@ This project contains a Dockerfile for building, scanning, and running a Java ap
     COPY pom.xml .
     RUN mvn dependency:go-offline
     ```
-4. **Source Code**: `COPY src ./src`
+4. **Source Code**: `COPY . .`
 5. **Build Command**:
     ```sh
     RUN mvn package -DskipTests
     ```
 
-### Stage 2: Security Scanning
+### Stage 2: Security Scanning with Trivy - This can be part of CI/CD pipeline as well if you dont chose to ember here.
 
-1. **Base Image**: `openjdk:11-jre-slim`
-2. **Working Directory**: `/app`
-3. **Copy Built JAR**: `COPY --from=builder /app/target/webapp-1.0-SNAPSHOT.jar .`
-4. **Install Trivy for Scanning**:
-    ```sh
-    RUN apt-get update && apt-get install -y --no-install-recommends wget && \
-        wget https://github.com/aquasecurity/trivy/releases/download/v0.19.2/trivy_0.19.2_Linux-64bit.deb && \
-        dpkg -i trivy_0.19.2_Linux-64bit.deb && \
-        rm trivy_0.19.2_Linux-64bit.deb && \
-        apt-get purge -y --auto-remove wget && \
-        rm -rf /var/lib/apt/lists/*
-    ```
-5. **Run Security Scan**:
-    ```sh
-    RUN trivy --exit-code 1 --no-progress webapp.jar
-    ```
+1. **Base Image**: Uses the builder stage as the base
+2. **Copy Trivy**: `COPY --from=aquasec/trivy:latest /usr/local/bin/trivy /usr/local/bin/trivy`
+3. **Run TRivy Scan**: `RUN trivy rootfs --exit-code 1 --no-progress /`
 
 ### Stage 3: Create the Final Image
 
@@ -49,7 +34,7 @@ This project contains a Dockerfile for building, scanning, and running a Java ap
     USER webuser
     ```
 3. **Working Directory**: `/app`
-4. **Copy Built JAR**: `COPY --from=scanner /app/webapp.jar .`
+4. **Copy Built JAR**: `COPY --from=builder /app/target/webapp-1.0-SNAPSHOT.jar ./webapp.jar.`
 5. **Java Options**:
     ```sh
     ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=25.0"
