@@ -19,6 +19,7 @@ Refer to docker file doc to see some of the above mentioned pratices implemented
 
 ## Kubernetes security features
 Security has become a critical feature from end to end application development along with Infrastructure as they compliment each other to bring the best of the security posture . Below are the most common security features of K8s that should not be ignored.  All of them combine together to minimize the attack surface.
+
 - **Cluster Hardening:**
   - Role-Based Access Control (RBAC): RBAC is an  standard for enterprises that requires minimizing the control as much as possible within the cluster whether it's on-prem or in the cloud. Thus, user and service 
     permissions are assigned and are tightly scoped. For Example Use Role and Role Bindings for assigning access to resources.
@@ -42,6 +43,19 @@ Security has become a critical feature from end to end application development a
 
   Refer to securpod.yaml read me file to see some of the above mentioned pratices implemented , See: See: [SECUREPOD-README](podsec_readme.md)
 
+## Infrastructure as a Service - Concept and Security Implications
+Infrastructure as a Service (IaaS) is a cloud computing model that provides virtual infrastructure resources . The other two categories of cloud services are Platform as a Service (PaaS) and Software as a service (SaaS) . In IaaS, provider is responsible for managing IT infrastructures like storage, servers and network resources which they then deliver to their clients who can access them from anywhere through virtual machines (VMs) over Internet.
+
+# Security Implications Of Iaas
+
+- **Shared Responsibility Model:**
+  In IaaS model, security obligations are shared between a cloud provider and its customers. The physical infrastructure such as servers, storage devices, networking hardware among others will be handled by the provider while the customer retains responsibility of securing their data, applications as well as operating systems over virtual infrastructures.
+
+- **Security at Rest - Data Security and Compliance:**
+IaaS providers typically offer data encryption features, identity and access management services as well as network security features to safeguard customers’ data against unauthorized access. However, this relies on the customers’ ability to set them for their specific industries hence obeying particular rules that apply to them like GDPR or partially HIPAA.
+
+- **Network Security:**
+IaaS models include virtualized switching and routing whose configurations allow inclusion of routers/switches/firewalls meant for safeguarding between VMs and Internet. On the customers’ end they can ensure network protection through usage of VPNs or partitioning networks into segments thereby protecting both applications and information.
 
 ### Prerequisites
 Ensure you have the following setup:
