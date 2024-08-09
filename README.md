@@ -67,3 +67,23 @@ IaaS models include virtualized switching and routing whose configurations allow
  
 Please refer to the code - [Terraform-WebServer](./canary/)
 
+# Serverless Function App Deployment using Github Actions
+
+**Assumption**
+  - Assuming that a simple python function App is already present which we have to deploy in Azure.
+  - Assuming that secrets are already present in Github and inputs are supplied to the Github Workflow.
+  - Assuming that the pythin function app is error free.
+  - Github Action Workflow doesnt fail.
+  
+**Github Actions performs following steps**
+  - Linting using Flake8
+  - Test using pytest and uploading the test results.
+  - Security Scan using SonarQube
+  - Quality Approval Gates based on scanning and project stats
+  - Deploying of the App using a publish profile.
+  - Notify on Slack Channel once deployment is finished with all necesary Information.
+  
+ 
+Please refer to the code - [Github-Action](./.github/workflows/)
+
+
