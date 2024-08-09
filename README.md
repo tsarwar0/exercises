@@ -43,10 +43,10 @@ Security has become a critical feature from end to end application development a
 
   Refer to securpod.yaml read me file to see some of the above mentioned pratices implemented , See: See: [SECUREPOD-README](podsec_readme.md)
 
-## Infrastructure as a Service - Concept and Security Implications
+# Infrastructure as a Service - Concept and Security Implications
 Infrastructure as a Service (IaaS) is a cloud computing model that provides virtual infrastructure resources . The other two categories of cloud services are Platform as a Service (PaaS) and Software as a service (SaaS) . In IaaS, provider is responsible for managing IT infrastructures like storage, servers and network resources which they then deliver to their clients who can access them from anywhere through virtual machines (VMs) over Internet.
 
-# Security Implications Of Iaas
+## Security Implications Of IaaS
 
 - **Shared Responsibility Model:**
   In IaaS model, security obligations are shared between a cloud provider and its customers. The physical infrastructure such as servers, storage devices, networking hardware among others will be handled by the provider while the customer retains responsibility of securing their data, applications as well as operating systems over virtual infrastructures.
