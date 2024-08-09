@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
   - name: webapp
-    image: webappacr.azurecr.io/webapp:latest
+    image: imgregistry01.azurecr.io/webapp:latest
     ports:
     - containerPort: 8080
     securityContext:
