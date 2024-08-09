@@ -1,0 +1,120 @@
+name: Azure Function CI/CD Pipeline
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Lint with flake8
+        id: flake8
+        continue-on-error: true
+        run: |
+          # fail if there are any flake8 errors
+          flake8 . --count --max-complexity=15 --max-line-length=127 --statistics
+      
+      - name: Check if 'Lint with flake8' step failed
+        if: steps.flake8.outcome != 'success'
+        run: |
+          echo "flake8 fails"
+          exit 1
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Test with pytest
+        run: |
+          pip install pytest pytest-cov
+          pytest func-app.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+      
+      - name: Upload pytest test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results-${{ inputs.python-version }}
+          path: junit/test-results-${{ inputs.python-version }}.xml
+        if: ${{ always() }}
+
+  security_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run SonarQube Scan
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+            -Dsonar.projectKey=${{ inputs.sonar-project-key }} \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ env.SONAR_TOKEN }}
+
+      - name: Check SonarQube Quality Gate
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          status=$(curl -s -u $SONAR_TOKEN: $SONAR_HOST_URL/api/qualitygates/project_status?projectKey=${{ inputs.sonar-project-key }} | jq -r .projectStatus.status)
+          if [ "$status" != "OK" ]; then
+            echo "Quality gate failed: $status"
+            exit 1
+          else
+            echo "Quality gate passed: $status"
+          fi
+
+  deploy:
+    needs: [lint, test, security_scan]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Deploy to Azure Functions
+        uses: azure/functions-action@v1
+        with:
+          app-name: ${{ inputs.azure-function-app-name }}
+          package: '.'
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+          "text": "Hello team :wave:,\n\nHere are the details of the latest *Dev environment* deployment job :rocket::\n\n- *GitHub Repository:* ${{ github.repository }}\n- *Job Run URL:* https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n- *Pull Request number of build:* ${{ inputs.PR_NUMBER }}\n- *Github Action Runner number of build:* ${{ inputs.GIT_BUILD_RUNNER_NUMBER }}\n- *Image Tag Name:* ${{ needs.set-up.outputs.imagetag }}\n- *Environment Name:* ${{ inputs.environment }}\n- *Docker Image URL:* https://${{ env.DOCKER_REGISTRY }}/ui/repos/tree/General/docker-dev/${{ inputs.APP_NAME }}/${{ needs.set-up.outputs.imagetag }}\n- *Build Info URL*: https://${{ env.DOCKER_REGISTRY }}/ui/builds/${{ inputs.APP_NAME }}/${{ needs.set-up.outputs.imagetag }}/published?buildRepo=artifactory-build-info\n- *Job Status:* ${{ job.status }}\n- *Workflow:* ${{ github.workflow }}\n\nPlease review the details and let us know if you need any further information.\n\nThank you."
+        }' ${{ secrets.SLACK_NP_WEBHOOK_URL }}   
+      shell: bash
